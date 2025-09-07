@@ -1,0 +1,44 @@
+/* Global background for the entire app */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  /* Layer 1: soft gradient */
+  background: radial-gradient(
+      1200px 600px at 10% -10%,
+      rgba(33, 150, 243, 0.12),
+      transparent 60%
+    ),
+    radial-gradient(
+      1000px 500px at 110% 10%,
+      rgba(76, 175, 80, 0.1),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 500px at 50% 110%,
+      rgba(255, 152, 0, 0.1),
+      transparent 60%
+    ),
+    #f5f7fb;
+  background-attachment: fixed;
+}
+
+/* Layer 2: subtle academic pattern using an inline SVG (books, caps abstract) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%231976d2' stroke-width='1'%3E%3Cpath d='M20 30 l20 -10 l20 10 l-20 10 z'/%3E%3Cpath d='M90 90 h20 v12 h-20 z'/%3E%3Ccircle cx='35' cy='95' r='6'/%3E%3Cpath d='M70 40 h28 v8 H70 z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 280px 280px;
+}
+
+/* Improve Paper elevation feel on patterned background */
+.MuiPaper-root {
+  backdrop-filter: saturate(120%) blur(0px);
+}
