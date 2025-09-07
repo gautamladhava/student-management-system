@@ -59,56 +59,19 @@ export default function Dashboard() {
       const averageMarks =
         markCount > 0 ? (totalMarks / markCount).toFixed(1) : 0;
 
-      // Calculate trends (simplified - you can make this more sophisticated)
-      const currentMonth = new Date().getMonth();
-      const currentYear = new Date().getFullYear();
-
-      const recentStudents = studentsData.filter((student) => {
-        const studentDate = new Date(student.createdAt || student.updatedAt);
-        return (
-          studentDate.getMonth() === currentMonth &&
-          studentDate.getFullYear() === currentYear
-        );
-      });
-
-      const recentSubjects = subjectsData.filter((subject) => {
-        const subjectDate = new Date(subject.createdAt || subject.updatedAt);
-        return (
-          subjectDate.getMonth() === currentMonth &&
-          subjectDate.getFullYear() === currentYear
-        );
-      });
-
-      const recentMarks = marksData.filter((mark) => {
-        const markDate = new Date(mark.createdAt || mark.updatedAt);
-        return (
-          markDate.getMonth() === currentMonth &&
-          markDate.getFullYear() === currentYear
-        );
-      });
-
       setDashboardData({
         students: {
           count: studentCount,
-          trend:
-            recentStudents.length > 0
-              ? `+${recentStudents.length} this month`
-              : "No new students",
+          trend: "No new students",
         },
         subjects: {
           count: subjectCount,
-          trend:
-            recentSubjects.length > 0
-              ? `+${recentSubjects.length} new added`
-              : "No new subjects",
+          trend: "No new subjects",
         },
         marks: {
           count: markCount,
           average: averageMarks,
-          trend:
-            recentMarks.length > 0
-              ? `+${recentMarks.length} updated`
-              : "No updates",
+          trend: "No updates marks",
         },
       });
     } catch (error) {
@@ -143,7 +106,7 @@ export default function Dashboard() {
       icon: <Score />,
       color: "#ff9800",
       count: `${dashboardData.marks.average}%`,
-      trend: `${dashboardData.marks.count} records`,
+      trend: dashboardData.subjects.trend,
     },
   ];
 
@@ -263,11 +226,11 @@ export default function Dashboard() {
       </Box>
       <Grid
         container
-        spacing={6}
+        spacing={3}
         sx={{ mb: 3, display: "flex", justifyContent: "center" }}
       >
         {cards.map((card) => (
-          <Grid item xs={12} md={12} lg={12} key={card.title}>
+          <Grid item xs={12} sm={6} md={4} lg={4} key={card.title}>
             <Paper
               sx={{
                 p: 3,
@@ -371,6 +334,7 @@ export default function Dashboard() {
         elevation={0}
         sx={{
           p: 2.5,
+          m: 6,
           borderRadius: 3,
           border: "1px solid",
           borderColor: "divider",

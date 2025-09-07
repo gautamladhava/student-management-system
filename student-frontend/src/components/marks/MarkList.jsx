@@ -88,7 +88,7 @@ export default function MarkList({ onDataChange }) {
         severity: "success",
       });
       loadMarks();
-      onDataChange?.(); // Refresh dashboard data
+      onDataChange?.();
     } catch (error) {
       setSnackbar({
         open: true,
@@ -161,10 +161,10 @@ export default function MarkList({ onDataChange }) {
 
       <Box sx={{ mb: 2 }}>
         <TextField
-          fullWidth
+          //   fullWidth
           variant="outlined"
           size="small"
-          placeholder="Search marks..."
+          placeholder="Search student..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{

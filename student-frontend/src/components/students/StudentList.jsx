@@ -14,7 +14,6 @@ import {
   CardContent,
   Avatar,
   Chip,
-  Pagination,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -42,8 +41,6 @@ export default function StudentList({ onDataChange }) {
     severity: "success",
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1);
-  const [rowsPerPage] = useState(6);
 
   useEffect(() => {
     loadStudents();
@@ -72,7 +69,7 @@ export default function StudentList({ onDataChange }) {
 
   const handleFormSubmit = () => {
     loadStudents();
-    onDataChange?.(); // Refresh dashboard data
+    onDataChange?.();
   };
 
   const handleDeleteClick = (student) => {
@@ -89,7 +86,7 @@ export default function StudentList({ onDataChange }) {
         severity: "success",
       });
       loadStudents();
-      onDataChange?.(); // Refresh dashboard data
+      onDataChange?.();
     } catch (error) {
       setSnackbar({
         open: true,
@@ -109,24 +106,12 @@ export default function StudentList({ onDataChange }) {
       .includes(searchTerm.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
-  const paginatedStudents = filteredStudents.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage
-  );
-
-  const handlePageChange = (event, value) => {
-    setPage(value);
-  };
-
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setPage(1);
   };
 
   const handleClearSearch = () => {
     setSearchTerm("");
-    setPage(1);
   };
 
   if (loading) return <Typography>Loading...</Typography>;
@@ -161,7 +146,7 @@ export default function StudentList({ onDataChange }) {
 
       <Box sx={{ mb: 3 }}>
         <TextField
-          fullWidth
+          // fullWidth
           variant="outlined"
           size="small"
           placeholder="Search students..."
@@ -197,40 +182,104 @@ export default function StudentList({ onDataChange }) {
       </Box>
 
       <Grid container spacing={3}>
-        {paginatedStudents.map((student) => (
+        {filteredStudents.map((student, index) => (
           <Grid item xs={12} sm={6} md={4} lg={4} key={student.id}>
             <Card
               sx={{
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                transition: "all 0.3s ease",
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                animation: `cardSlideIn 0.6s ease-out ${index * 0.1}s both`,
                 "&:hover": {
-                  transform: "translateY(-4px)",
-                  boxShadow: (theme) => theme.shadows[8],
+                  transform: "translateY(-8px) scale(1.02)",
+                  boxShadow:
+                    "0 20px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(33, 150, 243, 0.1)",
+                  "& .student-avatar": {
+                    transform: "scale(1.1) rotate(5deg)",
+                    boxShadow: "0 8px 25px rgba(33, 150, 243, 0.3)",
+                  },
+                  "& .student-name": {
+                    background:
+                      "linear-gradient(45deg, #2196f3 30%, #21cbf3 90%)",
+                    backgroundClip: "text",
+                    textFillColor: "transparent",
+                  },
                 },
-                borderRadius: 3,
+                borderRadius: 4,
                 border: "1px solid",
                 borderColor: "divider",
+                background:
+                  "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%)",
+                backdropFilter: "blur(10px)",
+                position: "relative",
+                overflow: "hidden",
+                "&::before": {
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "4px",
+                  background:
+                    "linear-gradient(90deg, #2196f3, #21cbf3, #4caf50)",
+                  opacity: 0,
+                  transition: "opacity 0.3s ease",
+                },
+                "&:hover::before": {
+                  opacity: 1,
+                },
+                "@keyframes cardSlideIn": {
+                  "0%": {
+                    opacity: 0,
+                    transform: "translateY(30px) scale(0.95)",
+                  },
+                  "100%": {
+                    opacity: 1,
+                    transform: "translateY(0) scale(1)",
+                  },
+                },
               }}
             >
               <CardContent sx={{ flexGrow: 1, p: 3 }}>
                 <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <Avatar
+                    className="student-avatar"
                     sx={{
-                      bgcolor: "primary.light",
-                      width: 56,
-                      height: 56,
+                      background:
+                        "linear-gradient(135deg, #2196f3 0%, #21cbf3 100%)",
+                      width: 64,
+                      height: 64,
                       mr: 2,
+                      fontSize: "1.5rem",
+                      fontWeight: 700,
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      boxShadow: "0 4px 15px rgba(33, 150, 243, 0.2)",
+                      border: "3px solid rgba(255,255,255,0.8)",
                     }}
                   >
                     {student.firstName[0].toUpperCase()}
                   </Avatar>
                   <Box sx={{ flexGrow: 1 }}>
-                    <Typography variant="h6" fontWeight={600}>
+                    <Typography
+                      className="student-name"
+                      variant="h6"
+                      fontWeight={700}
+                      sx={{
+                        transition: "all 0.3s ease",
+                        fontSize: "1.1rem",
+                      }}
+                    >
                       {student.firstName} {student.lastName}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        fontWeight: 500,
+                        opacity: 0.8,
+                      }}
+                    >
                       Roll No: {student.rollNo}
                     </Typography>
                   </Box>
@@ -240,11 +289,25 @@ export default function StudentList({ onDataChange }) {
                   <Typography
                     variant="body2"
                     color="text.secondary"
-                    sx={{ mb: 1 }}
+                    sx={{
+                      mb: 1,
+                      fontWeight: 600,
+                      fontSize: "0.8rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
                   >
                     Email
                   </Typography>
-                  <Typography variant="body1" sx={{ wordBreak: "break-word" }}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      wordBreak: "break-word",
+                      fontWeight: 500,
+                      color: "text.primary",
+                      fontSize: "0.9rem",
+                    }}
+                  >
                     {student.email}
                   </Typography>
                 </Box>
@@ -254,33 +317,72 @@ export default function StudentList({ onDataChange }) {
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      sx={{ mb: 1 }}
+                      sx={{
+                        mb: 1,
+                        fontWeight: 600,
+                        fontSize: "0.8rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                      }}
                     >
                       Date of Birth
                     </Typography>
-                    <Typography variant="body1">
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.primary",
+                        fontSize: "0.9rem",
+                      }}
+                    >
                       {new Date(student.dateOfBirth).toLocaleDateString()}
                     </Typography>
                   </Box>
                 )}
 
-                <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+                <Box sx={{ display: "flex", gap: 1.5, mt: 3 }}>
                   <Button
                     size="small"
-                    variant="outlined"
+                    variant="contained"
                     startIcon={<EditIcon />}
                     onClick={() => handleEditClick(student)}
-                    sx={{ textTransform: "none", flexGrow: 1 }}
+                    sx={{
+                      textTransform: "none",
+                      flexGrow: 1,
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      background:
+                        "linear-gradient(45deg, #2196f3 30%, #21cbf3 90%)",
+                      boxShadow: "0 3px 10px rgba(33, 150, 243, 0.3)",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 6px 20px rgba(33, 150, 243, 0.4)",
+                      },
+                    }}
                   >
                     Edit
                   </Button>
                   <Button
                     size="small"
-                    variant="outlined"
+                    variant="contained"
                     color="error"
                     startIcon={<DeleteIcon />}
                     onClick={() => handleDeleteClick(student)}
-                    sx={{ textTransform: "none", flexGrow: 1 }}
+                    sx={{
+                      textTransform: "none",
+                      flexGrow: 1,
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      background:
+                        "linear-gradient(45deg, #f44336 30%, #ff5722 90%)",
+                      boxShadow: "0 3px 10px rgba(244, 67, 54, 0.3)",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 6px 20px rgba(244, 67, 54, 0.4)",
+                      },
+                    }}
                   >
                     Delete
                   </Button>
@@ -306,18 +408,6 @@ export default function StudentList({ onDataChange }) {
               ? "Try adjusting your search criteria"
               : "Add your first student to get started"}
           </Typography>
-        </Box>
-      )}
-
-      {totalPages > 1 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={handlePageChange}
-            color="primary"
-            size="large"
-          />
         </Box>
       )}
 

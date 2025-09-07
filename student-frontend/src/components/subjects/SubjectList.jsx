@@ -140,7 +140,7 @@ export default function SubjectList({ onDataChange }) {
 
       <Box sx={{ mb: 2 }}>
         <TextField
-          fullWidth
+          // fullWidth
           variant="outlined"
           size="small"
           placeholder="Search subjects..."
